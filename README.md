@@ -6,4 +6,4 @@ Scrape g2crowd reviews with R
     scrape_urls(category, pages)
 
 # Scrape review texts from urls
-    scrape_reviews <- function(urls)
+    scrape_reviews(urls)
