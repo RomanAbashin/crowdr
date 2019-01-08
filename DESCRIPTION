@@ -1,0 +1,21 @@
+Type: Package
+Package: crowdr
+Version: 0.1.0.9000
+Date: 2019-01-09
+Title: Scrape Reviews from G2 Crowd
+Description: Quickly accumulate review contents and metadata for competitors in 
+    a specific software category via 'g2crowd.com'.
+Authors@R: 
+    c(person("Roman", "Abashin", role = c("aut", "cre"),
+             email ="mail@romanabashin.com"))
+Depends:
+    R (>= 3.3.3)
+Imports: 
+    dplyr (>= 0.7.8), 
+    rvest (>= 0.3.2),
+    tibble (>= 1.4.2)
+Encoding: UTF-8
+License: MIT
+LazyData: true
+VignetteBuilder: knitr
+RoxygenNote: 6.1.1
