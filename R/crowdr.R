@@ -1,5 +1,4 @@
-#' @importFrom dplyr "%>%" mutate bind_rows
-#' @importFrom tibble as_tibble
+#' @importFrom dplyr "%>%"
 #' @importFrom rvest html_nodes html_text html_attr
 #' @importFrom xml2 read_html
 .onAttach <- function(libname, pkgname) {
@@ -20,7 +19,7 @@
 #' @export
 #' @examples
 #' x <- scrape_urls("crm", 3)
-scrape_urls <- function(category, pages){
+scrape_urls <- function(category, pages = NULL){
 
   x <- read_html(paste0("https://www.g2crowd.com/categories/", category))
 
@@ -31,12 +30,19 @@ scrape_urls <- function(category, pages){
     html_text() %>%
     as.integer()
 
-  if(length(n) == 0){
-    pages <- 1
+  n <- ceiling(n/50)
+
+  if (is.null(pages)) {
+    pages <- n
+  } else if (!is.integer(pages)) {
+    stop("The pages variable has to be NULL or an integer.")
+  } else if (pages > n) {
+    stop(paste("This category only has", n, "pages"))
+  } else if (length(n) == 0) {
+    stop("Error while trying to determine number of possible pages. (Result was NULL)")
   } else {
     pages <- ceiling(n/50)
   }
-
 
 
   for(i in 1:pages){
@@ -47,7 +53,7 @@ scrape_urls <- function(category, pages){
       urls <- x %>%
         html_nodes("[itemprop=url]") %>%
         html_attr("href") %>%
-        tibble::as_tibble() %>%
+        tibble::enframe(name = NULL) %>%
         dplyr::mutate(value = paste0("https://www.g2crowd.com", value))
 
       y <- x %>%
@@ -61,23 +67,56 @@ scrape_urls <- function(category, pages){
         .[seq(0, length(.), 2)]  %>%
         gsub("[^[:digit:]\\.[:digit:] |[:digit:] ]", "", .) %>%
         trimws(.) %>%
-        strsplit(., " ")
+        unlist(strsplit(., " ")) %>%
+        tibble::enframe(name = NULL)
 
-      urls <- urls %>%
-        dplyr::bind_cols(names) %>%
-        dplyr::bind_cols(reviews)
+      reviews <- lapply(strsplit(reviews$value, " "), rev)
+      reviews <- as.data.frame(do.call(rbind, reviews))
+
+      if (dim(reviews)[2] == 1) {
+        reviews$V2 <- 0
+      }
+
+      result <- cbind(names, reviews, urls)
 
     } else {
       urls <- x %>%
         html_nodes("[itemprop=url]") %>%
         html_attr("href") %>%
-        tibble::as_tibble() %>%
-        dplyr::mutate(name = gsub("\\/products\\/|\\/reviews", "", value),
-                      value = paste0("https://www.g2crowd.com", value)) %>%
-        dplyr::bind_rows(urls)
+        tibble::enframe(name = NULL) %>%
+        dplyr::mutate(value = paste0("https://www.g2crowd.com", value))
+
+      y <- x %>%
+        html_nodes("[class='d-f ai-c jc-sb fw-w']") %>%
+        html_nodes("a") %>%
+        html_text()
+
+      names <- y %>% .[seq(1, length(.), 2)]
+
+      reviews <- y %>%
+        .[seq(0, length(.), 2)]  %>%
+        gsub("[^[:digit:]\\.[:digit:] |[:digit:] ]", "", .) %>%
+        trimws(.) %>%
+        unlist(strsplit(., " ")) %>%
+        tibble::enframe(name = NULL)
+
+      # Test
+      reviews <- lapply(strsplit(reviews$value, " "), rev)
+      reviews <- as.data.frame(do.call(rbind, reviews))
+
+      if (dim(reviews)[2] == 1) {
+        reviews$V2 <- 0
+      }
+
+      result <- rbind(result, cbind(names, reviews, urls))
+
     }
+
+
   }
-  return(urls)
+
+  colnames(result) <- c("name", "no_reviews", "avg_rating", "url")
+  return(result)
 }
 
 

@@ -13,7 +13,8 @@ Depends:
 Imports: 
     dplyr (>= 0.7.8), 
     rvest (>= 0.3.2),
-    tibble (>= 1.4.2)
+    tibble (>= 1.4.2),
+    xml2 (>= 1.2.0)
 Encoding: UTF-8
 License: MIT
 LazyData: true

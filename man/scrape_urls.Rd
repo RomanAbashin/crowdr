@@ -4,7 +4,7 @@
 \alias{scrape_urls}
 \title{Scrape URLs}
 \usage{
-scrape_urls(category, pages)
+scrape_urls(category, pages = NULL)
 }
 \arguments{
 \item{category}{String. Slug of a software category}
