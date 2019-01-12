@@ -5,6 +5,11 @@
   packageStartupMessage("Welcome to crowdr, the fastest way to scrape G2 Crowd reviews.")
 }
 
+## quiets concerns of R CMD check re: the .'s that appear in pipelines
+## Thanks Jenny Bryan
+if(getRversion() >= "2.3.0")  utils::globalVariables(c("."))
+
+
 
 #' Scrape URLs
 #'
@@ -31,18 +36,16 @@ scrape_urls <- function(category, pages = NULL){
     html_text() %>%
     as.integer()
 
-  n <- ceiling(n/50)
+  maxpages <- ceiling(n/50)
 
   if (is.null(pages)) {
-    pages <- n
+    pages <- maxpages
   } else if (!is.integer(pages)) {
     stop("The pages variable has to be NULL or an integer.")
-  } else if (pages > n) {
-    stop(paste("This category only has", n, "pages"))
-  } else if (length(n) == 0) {
+  } else if (pages > maxpages) {
+    stop(paste("Category", category, "only has", maxpages, "pages. Cannot scrape more than that."))
+  } else if (length(maxpages) == 0) {
     stop("Error while trying to determine number of possible pages. (Result was NULL)")
-  } else {
-    pages <- ceiling(n/50)
   }
 
 
@@ -55,7 +58,7 @@ scrape_urls <- function(category, pages = NULL){
         html_nodes("[itemprop=url]") %>%
         html_attr("href") %>%
         tibble::enframe(name = NULL) %>%
-        dplyr::mutate(value = paste0("https://www.g2crowd.com", value))
+        dplyr::mutate(value = paste0("https://www.g2crowd.com", .$value))
 
       y <- x %>%
         html_nodes("[class='d-f ai-c jc-sb fw-w']") %>%
@@ -91,7 +94,7 @@ scrape_urls <- function(category, pages = NULL){
         html_nodes("[itemprop=url]") %>%
         html_attr("href") %>%
         tibble::enframe(name = NULL) %>%
-        dplyr::mutate(value = paste0("https://www.g2crowd.com", value))
+        dplyr::mutate(value = paste0("https://www.g2crowd.com", .$value))
 
       y <- x %>%
         html_nodes("[class='d-f ai-c jc-sb fw-w']") %>%
