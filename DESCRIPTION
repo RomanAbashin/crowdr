@@ -1,6 +1,6 @@
 Type: Package
 Package: crowdr
-Version: 0.2.0
+Version: 0.2.1
 Date: 2019-01-09
 Title: Scrape Reviews from G2 Crowd
 Description: Quickly accumulate review contents and metadata for competitors in 

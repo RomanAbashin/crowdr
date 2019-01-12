@@ -33,6 +33,12 @@ Example usage:
 
 # Changelog 
 
+## 2019-01-12 v0.2.1
+
+Updates
+
+* Output data type bug fixed
+
 ## 2019-01-12 v0.2.0
 
 Updates
