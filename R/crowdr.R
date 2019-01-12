@@ -71,13 +71,19 @@ scrape_urls <- function(category, pages = NULL){
         tibble::enframe(name = NULL)
 
       reviews <- lapply(strsplit(reviews$value, " "), rev)
-      reviews <- as.data.frame(do.call(rbind, reviews))
+      reviews <- as.data.frame(do.call(rbind, reviews), stringsAsFactors = FALSE)
 
+      # Fixes a bug where strsplit does not work on a page without reviews
       if (dim(reviews)[2] == 1) {
-        reviews$V2 <- 0
+        reviews[, 2] <- "0"
       }
 
-      result <- cbind(names, reviews, urls)
+      result <- data.frame(name = names,
+                           no_reviews = reviews[, 1],
+                           avg_rating = reviews[, 2],
+                           # Assigning a name does not work
+                           urls[, 1],
+                           stringsAsFactors = FALSE)
 
     } else {
       urls <- x %>%
@@ -108,12 +114,22 @@ scrape_urls <- function(category, pages = NULL){
         reviews$V2 <- 0
       }
 
-      result <- rbind(result, cbind(names, reviews, urls))
+      result <- rbind(result, data.frame(name = names,
+                                         no_reviews = reviews[, 1],
+                                         avg_rating = reviews[, 2],
+                                         # Assigning a name does not work
+                                         urls[, 1],
+                                         stringsAsFactors = FALSE))
 
     }
 
 
   }
+  # Correct data type
+  result[, 2] <- as.numeric(result[, 2])
+  result[, 3] <- as.numeric(result[, 3])
+
+  result <- tibble::as_tibble(result)
 
   colnames(result) <- c("name", "no_reviews", "avg_rating", "url")
   return(result)
