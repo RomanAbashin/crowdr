@@ -9,14 +9,15 @@ Authors@R:
     c(person("Roman", "Abashin", role = c("aut", "cre"),
              email ="mail@romanabashin.com"))
 Depends:
-    R (>= 3.3.3)
+    R (>= 3.3.0)
 Imports: 
     dplyr (>= 0.7.8), 
     rvest (>= 0.3.2),
     tibble (>= 1.4.2),
-    xml2 (>= 1.2.0)
+    xml2 (>= 1.2.0),
+    knitr (>= 1.2.0)
 Encoding: UTF-8
-License: MIT
+License: MIT + file LICENSE
 LazyData: true
 VignetteBuilder: knitr
 RoxygenNote: 6.1.1

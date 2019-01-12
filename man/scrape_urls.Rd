@@ -21,5 +21,6 @@ Scrape tool names, URLs, and ratings meta data from a software category on
 'G2Crowd.com'.
 }
 \examples{
-x <- scrape_urls("crm", 3)
+x <- scrape_urls("crm")
+x <- scrape_urls("crm", 3L)
 }

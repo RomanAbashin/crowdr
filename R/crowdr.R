@@ -18,7 +18,8 @@
 #'         rating for each tool of a software category.
 #' @export
 #' @examples
-#' x <- scrape_urls("crm", 3)
+#' x <- scrape_urls("crm")
+#' x <- scrape_urls("crm", 3L)
 scrape_urls <- function(category, pages = NULL){
 
   x <- read_html(paste0("https://www.g2crowd.com/categories/", category))
@@ -143,19 +144,10 @@ scrape_urls <- function(category, pages = NULL){
 #' in each iteration.
 #' @export
 #'
-#' @param factorMerger Object of a class \code{factorMerger}
-#' @param showStats If \code{TRUE} extends results with
-#' the loglikelihood (column \code{model}),
-#' p-value for the \code{LRT} tests against the full model (column \code{pval})
-#' and Generalized Information Criterion value (column \code{GIC}).
-#' By default \code{showStats} is set to \code{FALSE}.
-#' @param round Logical. If \code{TRUE}, the default, statistics are rounded
-#' @param penalty GIC penalty
+#' @param urls Vector of URLs
 #'
 #' @examples
-#' randSample <- generateMultivariateSample(N = 100, k = 10, d = 3)
-#' fm <- mergeFactors(randSample$response, randSample$factor)
-#' mergingHistory(fm, showStats = TRUE)
+#' x <- scrape_revies(urls)
 
 scrape_reviews <- function(urls){
 
